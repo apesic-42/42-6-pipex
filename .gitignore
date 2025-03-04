@@ -1,0 +1,31 @@
+# Fichiers binaires
+*.out
+*.o
+*.exe
+
+# Fichiers de débogage
+*.dSYM/
+
+# Fichiers temporaires et de sauvegarde
+*~
+*.swp
+
+# Dossiers de build
+build/
+cmake-build-*/
+
+# Fichiers de configuration de l'IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Fichiers de logs
+*.log
+
+# Fichiers de documentation générés
+docs/
+
+# Fichiers de configuration utilisateur
+.DS_Store
+Thumbs.db
