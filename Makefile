@@ -14,19 +14,6 @@ PRINTF_SRC = $(PRINTF_DIR)libftprintf.a
 
 PROJECT_DIR = .
 PROJECT_SRC =		main\
-					init/transform_init\
-					init/check_init\
-					init/create_listutil\
-					init/create_entities\
-					manipulate/manipulate_utils\
-					manipulate/manipulate_s\
-					manipulate/manipulate_p\
-					manipulate/manipulate_r\
-					manipulate/manipulate_rr\
-					algo/sort\
-					algo/is_or_not\
-					algo/sort_small\
-					out/out_normaly\
 
 PROJECT_DS = $(addprefix $(PROJECT_DIR)/, $(addsuffix .c, $(PROJECT_SRC)))
 OBJS = $(PROJECT_DS:.c=.o)
