@@ -33,3 +33,9 @@ char	*find_binary(char *str, char **env)
 	}
 	return (ft_strjoin(ft_strjoin(*spl, "/"), str));
 }
+
+int clean_exit(t_pipexelement * pipexx)
+{
+    free(pipexx);
+    return (0);
+}
