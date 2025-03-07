@@ -20,7 +20,17 @@ typedef struct s_pipexelement
 	pid_t	pid_fork1;
 	pid_t	pid_fork2;
 	char	*error;
+
 }			t_pipexelement;
+
+typedef struct {
+    int fd_in;
+    int fd_out;
+    int fd_extra;
+} FdSet;
+
+
+// astuce int[3] (pour pouvoir stocker temporairement)
 
 int			error_case(char *str);
 char		*find_binary(char *str, char **env);

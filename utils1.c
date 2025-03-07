@@ -3,6 +3,7 @@
 int	error_case(char *str)
 {
 	perror(str);
+	printf("ok\n");
 	return (1);
 }
 
@@ -34,7 +35,7 @@ char	*find_binary(char *str, char **env)
 	return (ft_strjoin(ft_strjoin(*spl, "/"), str));
 }
 
-int clean_exit(t_pipexelement * pipexx)
+int clean_exit(t_pipexelement *pipexx)
 {
     free(pipexx);
     return (0);
