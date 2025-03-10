@@ -1,10 +1,18 @@
 #include "pipex.h"
 
-int	error_case(char *str)
+int	error_case(char *str, t_pipexelement *pipexx)
 {
-	perror(str);
-	printf("ok\n");
-	return (1);
+    t_pipexelement *current;
+
+    current = pipexx;
+    while (current != NULL)
+    {
+        t_pipexelement *next = current->next;
+        free(current);
+        current = next;
+    }
+    perror(str);
+    return (1);
 }
 
 char	*find_binary(char *str, char **env)
@@ -35,8 +43,16 @@ char	*find_binary(char *str, char **env)
 	return (ft_strjoin(ft_strjoin(*spl, "/"), str));
 }
 
-int clean_exit(t_pipexelement *pipexx)
+int     clean_exit(t_pipexelement *pipexx, int *fd_files)
 {
-    free(pipexx);
+    t_pipexelement  *next;
+
+    close(fd_files[0]);
+    close(fd_files[1]);
+    while (next != NULL)
+    {
+        next = pipexx->next;
+        free(pipexx);
+    }
     return (0);
 }

@@ -12,28 +12,21 @@
 # include <sys/wait.h>
 # include <unistd.h>
 
+
 typedef struct s_pipexelement
 {
-	int		fd_file1;
-	int		fd_file2;
-	int		pip_fd[2];
-	pid_t	pid_fork1;
-	pid_t	pid_fork2;
+	int     fd_in;
+	int     fd_out;
+	pid_t	pid_fork;
 	char	*error;
+	char    *cmd;
+	struct s_pipexelement *next;
 
 }			t_pipexelement;
-
-typedef struct {
-    int fd_in;
-    int fd_out;
-    int fd_extra;
-} FdSet;
-
-
 // astuce int[3] (pour pouvoir stocker temporairement)
 
-int			error_case(char *str);
+int	error_case(char *str, t_pipexelement *pipexx);
 char		*find_binary(char *str, char **env);
-int         clean_exit(t_pipexelement * pipexx);
+int     clean_exit(t_pipexelement *pipexx, int *fd_files);
 
 #endif // FT_H
