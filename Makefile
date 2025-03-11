@@ -15,6 +15,7 @@ PRINTF_SRC = $(PRINTF_DIR)libftprintf.a
 PROJECT_DIR = .
 PROJECT_SRC =		main_simple\
                     utils1\
+                    fork_simple\
 
 PROJECT_DS = $(addprefix $(PROJECT_DIR)/, $(addsuffix .c, $(PROJECT_SRC)))
 OBJS = $(PROJECT_DS:.c=.o)

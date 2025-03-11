@@ -27,6 +27,8 @@ typedef struct s_pipexelement
 
 int	error_case(char *str, t_pipexelement *pipexx);
 char		*find_binary(char *str, char **env);
-int     clean_exit(t_pipexelement *pipexx, int *fd_files);
+int     clean_exit(t_pipexelement *pipexx);
+int make_process(t_pipexelement *head, char **v, char **env);
+
 
 #endif // FT_H

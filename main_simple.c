@@ -1,5 +1,6 @@
 
 #include "pipex.h"
+#include <sys/ucontext.h>
 #include <unistd.h>
 
 // static t_pipexelement	*init_fork_1(t_pipexelement *pipexobj, char **v)
@@ -64,14 +65,6 @@
 // }
 //
 
-void make_pipe(int *pip_fd)
-{
-   	if (pipe(pip_fd) == -1)
-   	{
-  		perror("pipe");
-  		exit(EXIT_FAILURE);
-   	}
-}
 
 // static char *childs(FdSet fds, char *cmd, char **env) {
 //     if (dup2(fds.fd_in, STDIN_FILENO) == -1) {
@@ -105,43 +98,28 @@ static void filesfds(int *fd_files, char **v, int c)
 }
 
 
-void print_pipex_list(t_pipexelement *head) {
-    t_pipexelement *current = head;
-    int position = 0;
 
-    while (current != NULL)
-    {
-        printf("Position: %d, Command: %s\n", position, current->cmd);
-        current = current->next;
-        position++;
-    }
-}
-
-// static int make_process(t_pipexelement *head, int *fd_files)
-// {
-//     t_pipexelement *current = head;
-
-//     while (current != NULL)
-//     {
-//        	if (pipe(current->pip_fd) == -1)
-//             return (error_case("malloc", head));
-//         current = current->next;
-//     }
-// }
 
 int put_fds(t_pipexelement *first, int *fd_files)
 {
-    int pipfds[2];
+    int pipfds[2]; // 0 -> lire | 1 -> ecrire
     int i;
 
     i = 0;
     if (pipe(pipfds) == -1)
-        return (error_case("malloc", first));
-    return (1);
-    // first
-
-
-
+        return (error_case("pipe", first));
+    first->fd_in = fd_files[0];
+    first->fd_out = pipfds[1];
+    first = first->next;
+    while (first->next != NULL)
+    {
+        first->fd_in = pipfds[0];
+        first->fd_out = pipfds[1];
+        first = first->next;
+    }
+    first->fd_in = pipfds[0];
+    first->fd_out = fd_files[1];
+    return (0);
 }
 
 
@@ -158,6 +136,19 @@ t_pipexelement *init_chain(t_pipexelement	*pipexobj, char *vi)
     return (pipexobj);
 }
 
+void print_pipex_list(t_pipexelement *head) {
+    t_pipexelement *current = head;
+    int position = 0;
+
+    while (current != NULL)
+    {
+        printf("Position: %d, Command: %s, fd1 : %d, fd2 : %d\n", position, current->cmd, current->fd_in, current->fd_out);
+        current = current->next;
+        position++;
+    }
+}
+
+
 int	main(int c, char **v, char **env)
 {
 	t_pipexelement	*pipexobj;
@@ -172,7 +163,6 @@ int	main(int c, char **v, char **env)
 	filesfds(fd_files, v, c);
     pipexobj = init_chain(pipexobj, v[++i]);
     first = pipexobj;
-    printf("argefqw : %s, i : %d\n", pipexobj->cmd, i);
     while (i < c - 2)
     {
         nexte = (t_pipexelement *)ft_calloc(sizeof(t_pipexelement), 1);
@@ -181,14 +171,14 @@ int	main(int c, char **v, char **env)
         pipexobj->next = nexte;
         nexte->cmd = v[++i];
         pipexobj = nexte;
-        printf("arg : %s\n", pipexobj->cmd);
     }
 
+	if (put_fds(first, fd_files) == 1)
+	   return (127);
     print_pipex_list(first);
-	put_fds(first, fd_files);
-	printf("herrree\n");
-	//make_process(first, fd_files);
-	return (clean_exit(pipexobj, fd_files));
+	if (make_process(first, v, env) == 1)
+	   return (127);
+	return (clean_exit(first));
 
 
 	// if (!pipexobj)

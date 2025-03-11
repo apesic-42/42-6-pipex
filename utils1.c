@@ -43,12 +43,12 @@ char	*find_binary(char *str, char **env)
 	return (ft_strjoin(ft_strjoin(*spl, "/"), str));
 }
 
-int     clean_exit(t_pipexelement *pipexx, int *fd_files)
+int     clean_exit(t_pipexelement *pipexx)
 {
     t_pipexelement  *next;
 
-    close(fd_files[0]);
-    close(fd_files[1]);
+    // wait les pid
+    // close les fds
     while (next != NULL)
     {
         next = pipexx->next;
