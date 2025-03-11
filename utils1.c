@@ -4,6 +4,7 @@ int	error_case(char *str, t_pipexelement *pipexx)
 {
     t_pipexelement *current;
 
+    printf("okaokedfae\n");
     current = pipexx;
     while (current != NULL)
     {

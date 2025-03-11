@@ -175,7 +175,6 @@ int	main(int c, char **v, char **env)
 
 	if (put_fds(first, fd_files) == 1)
 	   return (127);
-    print_pipex_list(first);
 	if (make_process(first, v, env) == 1)
 	   return (127);
 	return (clean_exit(first));
