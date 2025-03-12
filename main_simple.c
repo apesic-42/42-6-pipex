@@ -179,23 +179,4 @@ int	main(int c, char **v, char **env)
 	   return (127);
 	return (clean_exit(first));
 
-
-	// if (!pipexobj)
-	//    return (0);
-	// pipexobj = init_fork_1(pipexobj, v);
-	// if (pipexobj->error != NULL)
-	// 	return (error_case(pipexobj->error));
-	// if (pipexobj->pid_fork1 == 0)
-	// {
-	// 	FdSet fds2 = {pipexobj->fd_file1, pipexobj->pip_fd[1], pipexobj->pip_fd[0]};
- //        if (ft_strncmp(childs(fds2, v[3], env), "ok", 2) != 0) {
- //            return error_case(pipexobj->error);
- //        }
-	// }
-	// else
-	// {
-	// 	pipexobj = childrens(pipexobj, v, env);
-	// 	if (pipexobj->error != NULL)
-	// 		return (error_case(pipexobj->error));
-	// }
 }
