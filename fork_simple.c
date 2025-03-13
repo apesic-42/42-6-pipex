@@ -1,7 +1,7 @@
 
 #include "pipex.h"
 
-static void duppp(t_pipexelement *head, int *fd, int in_fd)
+static void multi_dup(t_pipexelement *head, int *fd, int in_fd)
 {
     if (head->fd_in == -228)
         dup2(in_fd, STDIN_FILENO);
@@ -14,21 +14,84 @@ static void duppp(t_pipexelement *head, int *fd, int in_fd)
     close(fd[0]);
 }
 
+
+static void closefds(t_pipexelement *head)
+{
+    int fds[2];
+
+    printf("ici : 1 : %d 2 : %d\n", fds[0], fds[1] );
+    fds[0] = head->fd_in;
+    while (head->next != NULL)
+        head = head->next;
+    fds[1] = head->fd_out;
+
+}
+
+int close_fds(t_pipexelement *first)
+{
+    while (first != NULL)
+    {
+        if (first->fd_in >= 0)
+        {
+            if (close(first->fd_in) == -1)
+                return (-1);
+        }
+        if (first->fd_out >= 0)
+        {
+            if (close(first->fd_out) == -1)
+                return (-1);
+        }
+        first = first->next;
+    }
+    return (0);
+}
+
+static char **spl_path(char **env)
+{
+   	const char	*path;
+    char		**spl;
+
+   	while (*env)
+	{
+		if (ft_strncmp(*env, "PATH=", 5) == 0)
+		{
+			path = ft_strchr(*env, '=') + 1;
+			break ;
+		}
+		env++;
+	}
+	spl = ft_split(path, ':');
+
+	return (spl);
+}
+
 int make_process(t_pipexelement *head, char **v, char **env)
 {
     int fd[2];
     int in_fd;
-    char *st;
-    char **stt;
+    char *bin;
+    char **cmd_spl;
+    t_pipexelement *headd;
+    char **path;
+
+    headd = head;
 
     in_fd = 0;
+    path = spl_path(env);
     while (head != NULL) {
-        pipe(fd);
-        if ((head->pid_fork = fork()) == 0) {
-            duppp(head, fd, in_fd);
-            st = find_binary(head->cmd, env);
-            stt = ft_split(head->cmd, ' ');
-            execve(st, stt, env);
+        if (pipe(fd) == -1)
+            return (error_case("pipe", headd));
+        if ((head->pid_fork = fork()) == 0)
+        {
+            multi_dup(head, fd, in_fd);
+            cmd_spl = ft_split(head->cmd, ' ');
+            bin = find_binary(cmd_spl[0], path);
+            clean_exit(headd, path);
+
+            execve(bin, cmd_spl, env);
+            // free(bin);
+            // free(cmd_spl);
+            //exit(0);
         }
         close(fd[1]);
         if (in_fd != 0)
@@ -37,6 +100,8 @@ int make_process(t_pipexelement *head, char **v, char **env)
         head = head->next;
     }
     if (in_fd != 0)
+    {
         close(in_fd);
-    return (0);
+    }
+    return (clean_exit(headd, path));
 }

@@ -26,9 +26,11 @@ typedef struct s_pipexelement
 // astuce int[3] (pour pouvoir stocker temporairement)
 
 int	error_case(char *str, t_pipexelement *pipexx);
-char		*find_binary(char *str, char **env);
-int     clean_exit(t_pipexelement *pipexx);
+char		*find_binary(char *str, char **path);
+int     clean_exit(t_pipexelement *pipexx, char **path);
 int make_process(t_pipexelement *head, char **v, char **env);
+int close_fds(t_pipexelement *first);
+void freeee(t_pipexelement *pipexx);
 
 
 #endif // FT_H

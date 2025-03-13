@@ -50,6 +50,7 @@ t_pipexelement *init_chain(t_pipexelement	*pipexobj, char *vi)
 }
 
 
+
 int	main(int c, char **v, char **env)
 {
 	t_pipexelement	*pipexobj;
@@ -78,6 +79,6 @@ int	main(int c, char **v, char **env)
 	   return (-1);
 	if (make_process(first, v, env) == 1)
 	   return (127);
-	return (clean_exit(first));
+	return (0);
 
 }
