@@ -2,94 +2,37 @@
 #include "pipex.h"
 
 
-void printfd(int fd) {
-    char buffer[1024];
-    ssize_t bytes_read;
-
-    while ((bytes_read = read(fd, buffer, sizeof(buffer))) > 0) {
-        // Écrire les données lues sur la sortie standard
-        if (write(STDOUT_FILENO, buffer, bytes_read) != bytes_read) {
-            perror("write");
-            return;
-        }
-    }
-
-    if (bytes_read == -1) {
-        perror("read");
-    }
-}
-
-static void get_fd_pipe(t_pipexelement *pipexobj, int *pipfds)
-{
-    pipfds[1] = pipexobj->fd_out;
-    while (pipexobj->next != NULL)
-        pipexobj = pipexobj->next;
-    pipfds[0] = pipexobj->fd_in;
-}
-
-static int childrens(t_pipexelement *pipexobj, char **v, char **env)
-{
-    printf("okokle %d\n", pipexobj->fd_in);
-    if (pipexobj->fd_in != STDIN_FILENO)
-    {
-        if (dup2(pipexobj->fd_in, STDIN_FILENO) == -1)
-            return (error_case("dup2", pipexobj));
-        close(pipexobj->fd_in);
-    }
-    printf("okoknw %d\n", pipexobj->fd_out);
-    if (pipexobj->fd_out != STDOUT_FILENO)
-    {
-        if (dup2(pipexobj->fd_out, STDOUT_FILENO) == -1)
-            return (error_case("dup2", pipexobj));
-        close(pipexobj->fd_out);
-    }
-    // printf("okokle\n");
-    execve(find_binary(pipexobj->cmd, env), ft_split(pipexobj->cmd, ' '), env);
-    return (error_case("execve", pipexobj)); // Execve ne retourne que s'il y a une erreur
-}
-
-
-
-static int parent(t_pipexelement *pipexobj)
-{
-    int status;
-    pid_t terminated_pid = wait(&status);
-    return (0);
-}
-
-
-
 int make_process(t_pipexelement *head, char **v, char **env)
 {
-    t_pipexelement *current = head;
-    int status;
+    int fd[2], in_fd = 0;
 
-    while (current != NULL)
-    {
-        current->pid_fork = fork();
-        if (current->pid_fork == -1)
-            return (error_case("fork", head));
+    while (head != NULL) {
+        pipe(fd);
+        if ((head->pid_fork = fork()) == 0) {
 
-        if (current->pid_fork == 0) // Enfant
-        {
-            childrens(current, v, env);
-            exit(EXIT_FAILURE);  // En cas d'échec de `childrens`
+            if (head->fd_in == -228)
+                dup2(in_fd, STDIN_FILENO);  // Utiliser l'ancien in_fd comme entrée
+            else
+                dup2(head->fd_in, STDIN_FILENO);
+            if (head->fd_out == -228)   // S'il y a une commande suivante, utiliser fd[1] comme sortie
+                dup2(fd[1], STDOUT_FILENO);
+            else
+                dup2(head->fd_out, STDOUT_FILENO);
+            close(fd[0]); // Fermer l'entrée du pipe dans le processus enfant
+            execve(find_binary(head->cmd, env), ft_split(head->cmd, ' '), env); // Assurez-vous de parser la commande correctement
+            perror("execvp");
+            exit(EXIT_FAILURE);
         }
-        else
-        {
-            if (current->fd_in != STDIN_FILENO)
-                close(current->fd_in);
-            if (current->next == NULL && current->fd_out != STDOUT_FILENO)
-                close(current->fd_out);
+        close(fd[1]);  // Fermer la sortie du pipe dans le parent
+        if (in_fd != 0) {
+            close(in_fd);  // Fermer le précédent in_fd s'il n'est pas le stdin initial
         }
-
-        current = current->next;
-    }
-
-    while (head != NULL) {  // Attendre chaque processus enfant
-        waitpid(head->pid_fork, &status, 0);
+        in_fd = fd[0];  // Préparer in_fd pour la prochaine commande
         head = head->next;
     }
 
+    // Fermer le dernier in_fd
+    if (in_fd != 0)
+        close(in_fd);
     return (0);
 }

@@ -99,29 +99,25 @@ static void filesfds(int *fd_files, char **v, int c)
 
 
 
-
 int put_fds(t_pipexelement *first, int *fd_files)
 {
-    int pipfds[2]; // 0 -> lire | 1 -> ecrire
     int i;
 
     i = 0;
-    if (pipe(pipfds) == -1)
-        return (error_case("pipe", first));
+
     first->fd_in = fd_files[0];
-    first->fd_out = pipfds[1];
+    first->fd_out = -228;
     first = first->next;
     while (first->next != NULL)
     {
-        first->fd_in = pipfds[0];
-        first->fd_out = pipfds[1];
+        first->fd_in = -228;
+        first->fd_out = -228;
         first = first->next;
     }
-    first->fd_in = pipfds[0];
+    first->fd_in = -228;
     first->fd_out = fd_files[1];
     return (0);
 }
-
 
 
 t_pipexelement *init_chain(t_pipexelement	*pipexobj, char *vi)

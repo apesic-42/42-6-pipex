@@ -44,16 +44,21 @@ char	*find_binary(char *str, char **env)
 	return (ft_strjoin(ft_strjoin(*spl, "/"), str));
 }
 
+
+
+// Fonction pour libérer une liste chaînée
 int     clean_exit(t_pipexelement *pipexx)
 {
-    t_pipexelement  *next;
+    t_pipexelement *current;
+    t_pipexelement *next;
 
-    // wait les pid
-    // close les fds
-    while (next != NULL)
-    {
-        next = pipexx->next;
-        free(pipexx);
+    current = pipexx;
+
+    // Parcourir chaque élément de la liste
+    while (current != NULL) {
+        next = current->next;
+        free(current);
+        current = next;
     }
     return (0);
 }
