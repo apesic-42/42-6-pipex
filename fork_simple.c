@@ -1,9 +1,9 @@
 
 #include "pipex.h"
 
-static void multi_dup(t_pipexelement *head, int *fd, int in_fd)
+static int multi_dup(t_pipexelement *head, int *fd, int in_fd)
 {
-    if (head->fd_in == -228)
+    if (head->fd_in == -228 || head->fd_in == -128)
         dup2(in_fd, STDIN_FILENO);
     else
         dup2(head->fd_in, STDIN_FILENO);
@@ -12,37 +12,6 @@ static void multi_dup(t_pipexelement *head, int *fd, int in_fd)
     else
         dup2(head->fd_out, STDOUT_FILENO);
     close(fd[0]);
-}
-
-
-static void closefds(t_pipexelement *head)
-{
-    int fds[2];
-
-    printf("ici : 1 : %d 2 : %d\n", fds[0], fds[1] );
-    fds[0] = head->fd_in;
-    while (head->next != NULL)
-        head = head->next;
-    fds[1] = head->fd_out;
-
-}
-
-int close_fds(t_pipexelement *first)
-{
-    while (first != NULL)
-    {
-        if (first->fd_in >= 0)
-        {
-            if (close(first->fd_in) == -1)
-                return (-1);
-        }
-        if (first->fd_out >= 0)
-        {
-            if (close(first->fd_out) == -1)
-                return (-1);
-        }
-        first = first->next;
-    }
     return (0);
 }
 
@@ -65,6 +34,24 @@ static char **spl_path(char **env)
 	return (spl);
 }
 
+static int read_fd(int fd) {
+    char buffer[BUFFER_SIZE];
+    ssize_t bytes_read;
+
+    // Boucle de lecture du contenu du fd
+    while ((bytes_read = read(fd, buffer, BUFFER_SIZE)) > 0) {
+        // Écriture des données lues à stdout ou traitement des données
+        write(STDOUT_FILENO, buffer, bytes_read);
+    }
+
+    if (bytes_read == -1) {
+        perror("Erreur lors de la lecture du fd");
+        return -1;
+    }
+
+    return 0;
+}
+
 int make_process(t_pipexelement *head, char **v, char **env)
 {
     int fd[2];
@@ -81,17 +68,24 @@ int make_process(t_pipexelement *head, char **v, char **env)
     while (head != NULL) {
         if (pipe(fd) == -1)
             return (error_case("pipe", headd));
+        if (head->fd_in == -128)
+        {
+            in_fd = here_doc(head->limiter);
+            if (in_fd == -1)
+                return (-1);
+        }
+        // printf("read fd \n");
+        // read_fd(in_fd);
+        // printf("fin read fd \n");
         if ((head->pid_fork = fork()) == 0)
         {
             multi_dup(head, fd, in_fd);
             cmd_spl = ft_split(head->cmd, ' ');
             bin = find_binary(cmd_spl[0], path);
             clean_exit(headd, path);
-
+            close(fd[1]);
+            //close(in_fd); //(cat dont work with that but it's an valgrind error)
             execve(bin, cmd_spl, env);
-            // free(bin);
-            // free(cmd_spl);
-            //exit(0);
         }
         close(fd[1]);
         if (in_fd != 0)

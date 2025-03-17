@@ -18,10 +18,15 @@ AR		=	ar
 
 PRINTF_DIR = printf/
 LIBFT_DIR = libft/
+GNL_DIR = get_next_line/
+
 PRINTF_SRC		=	ft_itoa_hexa  ft_itoa_hexa_ll  ft_itoa_hexa_upper  ft_putnumber_u  ft_printf  percent_csdiu  percent_pxXpercent
 PRINTF_DS = $(addprefix $(PRINTF_DIR), $(addsuffix .c, $(PRINTF_SRC)))
-OBJS = $(PRINTF_DS:.c=.o)
 
+GNL_SRC		=	get_next_line get_next_line_utils
+GNL_DS = $(addprefix $(GNL_DIR), $(addsuffix .c, $(GNL_SRC)))
+
+OBJS = $(PRINTF_DS:.c=.o) $(GNL_DS:.c=.o)
 
 all: $(NAME)
 
@@ -36,7 +41,7 @@ $(NAME): $(OBJS)
 clean:
 	make -C $(LIBFT_DIR) clean
 	rm -f $(OBJS)
-	
+
 fclean : clean
 	make -C $(LIBFT_DIR) fclean
 	rm -f $(NAME)

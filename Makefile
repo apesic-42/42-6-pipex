@@ -16,6 +16,7 @@ PROJECT_DIR = .
 PROJECT_SRC =		main_simple\
                     utils1\
                     fork_simple\
+                    here_doc\
 
 PROJECT_DS = $(addprefix $(PROJECT_DIR)/, $(addsuffix .c, $(PROJECT_SRC)))
 OBJS = $(PROJECT_DS:.c=.o)

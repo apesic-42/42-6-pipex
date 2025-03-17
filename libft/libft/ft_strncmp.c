@@ -19,6 +19,8 @@ int	ft_strncmp(const char *s1, const char *s2, size_t n)
 	unsigned char	o;
 
 	i = 0;
+	if (!s1 || !s2)
+	   return (-1);
 	while (i < n)
 	{
 		u = (unsigned char)s1[i];

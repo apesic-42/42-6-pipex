@@ -2,25 +2,25 @@
 
 int	error_case(char *str, t_pipexelement *pipexx)
 {
-    t_pipexelement *current;
+	t_pipexelement	*current;
+	t_pipexelement	*next;
 
-    printf("okaokedfae\n");
-    current = pipexx;
-    while (current != NULL)
-    {
-        t_pipexelement *next = current->next;
-        free(current);
-        current = next;
-    }
-    perror(str);
-    return (1);
+	current = pipexx;
+	while (current != NULL)
+	{
+		next = current->next;
+		free(current);
+		current = next;
+	}
+	perror(str);
+	return (1);
 }
 
 char	*find_binary(char *str, char **path)
 {
-	char		*pl;
-	char *temp;
-	char *bin;
+	char	*pl;
+	char	*temp;
+	char	*bin;
 
 	while (*path)
 	{
@@ -34,31 +34,52 @@ char	*find_binary(char *str, char **path)
 	return (bin);
 }
 
-void free_chained_list(t_pipexelement *pipexx)
+static void	free_chained_list(t_pipexelement *pipexx)
 {
-    t_pipexelement *current;
-    t_pipexelement *next;
-    current = pipexx;
+	t_pipexelement	*current;
+	t_pipexelement	*next;
 
-    while (current != NULL) {
-        next = current->next;
-        free(current);
-        current = next;
+	current = pipexx;
+	while (current != NULL)
+	{
+		next = current->next;
+		free(current);
+		current = next;
+	}
+}
+
+int close_fds(t_pipexelement *first)
+{
+    while (first != NULL)
+    {
+        if (first->fd_in >= 0)
+        {
+            if (close(first->fd_in) == -1)
+                return (-1);
+        }
+        if (first->fd_out >= 0)
+        {
+            if (close(first->fd_out) == -1)
+                return (-1);
+        }
+        first = first->next;
     }
+    return (0);
 }
 
 // Fonction pour libérer une liste chaînée
-int     clean_exit(t_pipexelement *pipexx, char **path)
+int	clean_exit(t_pipexelement *pipexx, char **path)
 {
-    int i;
+	int	i;
 
-    i = 0;
-    close_fds(pipexx);
-    free_chained_list(pipexx);
-    while (path[i]) {
-        free(path[i]);
-            i++;
-    }
-    free(path);
-    return (0);
+	i = 0;
+	close_fds(pipexx);
+	free_chained_list(pipexx);
+	while (path[i])
+	{
+		free(path[i]);
+		i++;
+	}
+	free(path);
+	return (0);
 }

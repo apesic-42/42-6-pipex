@@ -4,15 +4,25 @@
 #include <unistd.h>
 
 
-static void filesfds(int *fd_files, char **v, int c)
+static int filesfds(int *fd_files, char **v, int c)
 {
-    fd_files[0] = open(v[1], O_RDONLY);
+    int re;
+
+    re = 0;
+    if (ft_strncmp(v[1], "here_doc", 8) == 0)
+    {
+        fd_files[0] = -128;
+        re++;
+    }
+    else
+        fd_files[0] = open(v[1], O_RDONLY);
     fd_files[1] = open(v[c - 1], O_WRONLY | O_CREAT, 0644);
     if (fd_files[0] == -1 || fd_files[1] == -1)
     {
         perror("open");
         exit(EXIT_FAILURE);
     }
+    return (re);
 }
 
 
@@ -37,7 +47,7 @@ int put_fds(t_pipexelement *first, int *fd_files)
 }
 
 
-t_pipexelement *init_chain(t_pipexelement	*pipexobj, char *vi)
+t_pipexelement *init_chain(t_pipexelement	*pipexobj, char **v, int i)
 {
    	pipexobj = (t_pipexelement *)ft_calloc(sizeof(t_pipexelement), 1);
     if (!pipexobj)
@@ -45,7 +55,8 @@ t_pipexelement *init_chain(t_pipexelement	*pipexobj, char *vi)
         error_case("malloc", pipexobj);
         return (pipexobj);
     }
-    pipexobj->cmd = vi;
+    pipexobj->cmd = v[i];
+    pipexobj->limiter = v[2];
     return (pipexobj);
 }
 
@@ -62,8 +73,9 @@ int	main(int c, char **v, char **env)
 	if (c < 5)
 		return (0);
 	i = 1;
-	filesfds(fd_files, v, c);
-    pipexobj = init_chain(pipexobj, v[++i]);
+	i += filesfds(fd_files, v, c);
+	i++;
+    pipexobj = init_chain(pipexobj, v, i);
     first = pipexobj;
     while (i < c - 2)
     {
