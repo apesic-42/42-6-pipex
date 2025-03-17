@@ -12,6 +12,7 @@
 # include <sys/types.h>
 # include <sys/wait.h>
 # include <unistd.h>
+# include <string.h>
 
 
 typedef struct s_pipexelement

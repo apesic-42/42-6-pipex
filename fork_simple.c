@@ -34,23 +34,6 @@ static char **spl_path(char **env)
 	return (spl);
 }
 
-static int read_fd(int fd) {
-    char buffer[BUFFER_SIZE];
-    ssize_t bytes_read;
-
-    // Boucle de lecture du contenu du fd
-    while ((bytes_read = read(fd, buffer, BUFFER_SIZE)) > 0) {
-        // Écriture des données lues à stdout ou traitement des données
-        write(STDOUT_FILENO, buffer, bytes_read);
-    }
-
-    if (bytes_read == -1) {
-        perror("Erreur lors de la lecture du fd");
-        return -1;
-    }
-
-    return 0;
-}
 
 int make_process(t_pipexelement *head, char **v, char **env)
 {
@@ -74,9 +57,6 @@ int make_process(t_pipexelement *head, char **v, char **env)
             if (in_fd == -1)
                 return (-1);
         }
-        // printf("read fd \n");
-        // read_fd(in_fd);
-        // printf("fin read fd \n");
         if ((head->pid_fork = fork()) == 0)
         {
             multi_dup(head, fd, in_fd);
