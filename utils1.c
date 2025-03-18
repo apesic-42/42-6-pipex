@@ -18,7 +18,6 @@ int	error_case(char *str, t_pipexelement *pipexx)
 
 char	*find_binary(char *str, char **path)
 {
-	char	*pl;
 	char	*bin;
 
 	while (*path)
@@ -74,9 +73,6 @@ int close_fds(t_pipexelement *first)
 // Fonction pour libérer une liste chaînée
 int	clean_exit(t_pipexelement *pipexx)
 {
-	int	i;
-
-	i = 0;
 	close_fds(pipexx);
 	free_chained_list(pipexx);
 	return (0);

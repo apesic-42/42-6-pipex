@@ -50,7 +50,7 @@ OBJS = $(SRC:.c=.o)
 NAME	= libft.a
 CC = cc
 AR = ar
-FLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror
 
 all: $(NAME)
 
@@ -58,7 +58,7 @@ $(NAME) : $(OBJS)
 	$(AR) rcs $(NAME) $(OBJS)
 
 %.o:%.c
-	$(CC) $(FLAGS) -I./ -c $< -o $@
+	$(CC) $(CFLAGS) -I./ -c $< -o $@
 
 clean:
 	rm -f $(OBJS)

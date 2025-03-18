@@ -2,7 +2,7 @@
 
 NAME	=	pipex
 
-CC          =	cc
+CC          =	cc # clang
 CFLAGS_ANA  =   -fsanitize=address,leak,undefined -g3 -g
 CFLAGS      =	-Wall -Wextra -Werror $(CFLAGS_ANA)
 AR          =	ar
@@ -31,7 +31,7 @@ $(NAME): $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) $(LIBFT_SRC) $(PRINTF_SRC) -o $(NAME)
 
 %.o:%.c
-	$(CC) $(FLAGS) -I./ -c $< -o $@ -g # enlever -g
+	$(CC) $(CFLAGS) -I./ -c $< -o $@ -g # enlever -g
 
 clean:
 	make -C $(LIBFT_DIR) clean

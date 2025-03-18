@@ -31,7 +31,7 @@ typedef struct s_pipexelement
 int	error_case(char *str, t_pipexelement *pipexx);
 char		*find_binary(char *str, char **path);
 int     clean_exit(t_pipexelement *pipexx);
-int make_process(t_pipexelement *head, char **v, char **env);
+int make_process(t_pipexelement *head, char **env);
 int close_fds(t_pipexelement *first);
 int here_doc(char *limiter);
 

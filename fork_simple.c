@@ -49,13 +49,10 @@ char *get_cmd(const char *path) {
 
 static char *un_bb(char **env, t_pipexelement *head, int fd[2], t_pipexelement *headd)
 {
-
-	int             i;
 	char			**pathhh;
 	char			*bin;
 	char			**cmd_spl;
 
-	i = 0;
 
 	cmd_spl = ft_split(head->cmd, ' ');
 	multi_dup(head, fd, fd[2]);
@@ -84,7 +81,7 @@ static char *un_bb(char **env, t_pipexelement *head, int fd[2], t_pipexelement *
 	}
 }
 
-int make_process(t_pipexelement *head, char **v, char **env)
+int make_process(t_pipexelement *head, char **env)
 {
 	int				fd[3];
 	t_pipexelement	*headd;

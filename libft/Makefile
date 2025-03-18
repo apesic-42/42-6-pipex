@@ -36,7 +36,7 @@ $(NAME): $(OBJS)
 	$(AR) -rcs $(NAME) $(OBJS)
 
 %.o:%.c
-	$(CC) $(FLAGS) -I./ -c $< -o $@
+	$(CC) $(CFLAGS) -I./ -c $< -o $@
 
 clean:
 	make -C $(LIBFT_DIR) clean
