@@ -18,8 +18,10 @@ static char * place(char *str)
 
 static int finish(char *f1, char *f2, int c1, int r1)
 {
-    free(f1);
-    free(f2);
+    if (f1 != NULL)
+        free(f1);
+    if (f2 != NULL)
+        free(f2);
     close(c1);
     return (r1);
 }
@@ -41,7 +43,7 @@ int here_doc(char *limiter)
             line = place(line);
         if (line != NULL)
             write(fds[1], line, ft_strlen(line));
-        place(line);
+        free(line);
     }
     return (finish(wbn, line, fds[1], fds[0]));
 }
