@@ -28,10 +28,6 @@ static int filesfds(int *fd_files, char **v, int c)
 
 int put_fds(t_pipexelement *first, int *fd_files)
 {
-    int i;
-
-    i = 0;
-
     first->fd_in = fd_files[0];
     first->fd_out = -228;
     first = first->next;
@@ -86,7 +82,6 @@ int	main(int c, char **v, char **env)
         nexte->cmd = v[++i];
         pipexobj = nexte;
     }
-
 	if (put_fds(first, fd_files) == 1)
 	   return (-1);
 	if (make_process(first, v, env) == 1)

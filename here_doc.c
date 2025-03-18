@@ -9,33 +9,39 @@ static int pipee(int *fds)
     return (0);
 }
 
-static bool place(char *str)
+static char * place(char *str)
 {
     free(str);
-    return (false);
+    return (NULL);
+}
+
+
+static int finish(char *f1, char *f2, int c1, int r1)
+{
+    free(f1);
+    free(f2);
+    close(c1);
+    return (r1);
 }
 
 int here_doc(char *limiter)
 {
-    char *line = NULL;
-    char * wbn;
+    char *line;
+    char *wbn;
     int fds[2];
-    bool varr;
 
-    varr = true;
     wbn = ft_strjoin(limiter, "\n");
     if (!wbn || pipee(fds) == -1)
         return (-1);
-    while (varr == true)
+    while (line != NULL)
     {
         ft_printf("> ");
         line = get_next_line(STDIN_FILENO);
-        if (line == NULL)
-            varr = place(limiter);
-        if (ft_strncmp(wbn , line, ft_strlen(line)) == 0)
-            varr = place(line);
-        write(fds[1], line, strlen(line));
+        if (ft_strcmp(wbn , line) == 0)
+            line = place(line);
+        if (line != NULL)
+            write(fds[1], line, ft_strlen(line));
+        place(line);
     }
-    close(fds[1]);
-    return (fds[0]);
+    return (finish(wbn, line, fds[1], fds[0]));
 }

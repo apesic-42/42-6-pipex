@@ -2,9 +2,10 @@
 
 NAME	=	pipex
 
-CC		=	cc
-CFLAGS	=	-Wall -Wextra -Werror
-AR		=	ar
+CC          =	cc
+CFLAGS_ANA  =   -fsanitize=address,leak,undefined -g3 -g
+CFLAGS      =	-Wall -Wextra -Werror # $(CFLAGS_ANA)
+AR          =	ar
 
 LIBFT_DIR = libft/libft/
 PRINTF_DIR = libft/
@@ -27,7 +28,7 @@ all: $(NAME)
 $(NAME): $(OBJS)
 	make -C $(LIBFT_DIR)
 	make -C $(PRINTF_DIR)
-	$(CC) $(CFLAGS) $(OBJS) $(LIBFT_SRC) $(PRINTF_SRC) -o $(NAME) -g  # enlever -g
+	$(CC) $(CFLAGS) $(OBJS) $(LIBFT_SRC) $(PRINTF_SRC) -o $(NAME)
 
 %.o:%.c
 	$(CC) $(FLAGS) -I./ -c $< -o $@ -g # enlever -g
