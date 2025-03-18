@@ -10,11 +10,28 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+
+# include <stdlib.h>
+
+
 int	ft_tolower(int c)
 {
 	if (c >= 'A' && c <= 'Z')
 		return (c += 32);
 	return (c);
+}
+
+void free_double_table(char **table)
+{
+    int i;
+
+    i = 0;
+    while (table[i])
+    {
+    	free(table[i]);
+    	i++;
+    }
+    free(table);
 }
 /* #include <ctype.h>
 #include <stdio.h>

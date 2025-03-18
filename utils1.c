@@ -24,14 +24,19 @@ char	*find_binary(char *str, char **path)
 
 	while (*path)
 	{
-		if (access(*path, F_OK | X_OK) == 0)
-			break ;
+    	temp = ft_strjoin(*path, "/");
+    	bin = ft_strjoin(temp, str);
+		if (access(bin, F_OK | X_OK) == 0) {
+           	free(temp);
+           	return (bin);
+		} // le faire en 2 etape pour la gestion d'erreur
 		path++;
+		free(temp);
+		free(bin);
+
 	}
-	temp = ft_strjoin(*path, "/");
-	bin = ft_strjoin(temp, str);
-	free(temp);
-	return (bin);
+	return (0);
+
 }
 
 static void	free_chained_list(t_pipexelement *pipexx)
@@ -68,18 +73,12 @@ int close_fds(t_pipexelement *first)
 }
 
 // Fonction pour libérer une liste chaînée
-int	clean_exit(t_pipexelement *pipexx, char **path)
+int	clean_exit(t_pipexelement *pipexx)
 {
 	int	i;
 
 	i = 0;
 	close_fds(pipexx);
 	free_chained_list(pipexx);
-	while (path[i])
-	{
-		free(path[i]);
-		i++;
-	}
-	free(path);
 	return (0);
 }
