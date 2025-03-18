@@ -19,21 +19,20 @@ int	error_case(char *str, t_pipexelement *pipexx)
 char	*find_binary(char *str, char **path)
 {
 	char	*pl;
-	char	*temp;
 	char	*bin;
 
 	while (*path)
 	{
-    	temp = ft_strjoin(*path, "/");
-    	bin = ft_strjoin(temp, str);
-		if (access(bin, F_OK | X_OK) == 0) {
-           	free(temp);
-           	return (bin);
-		} // le faire en 2 etape pour la gestion d'erreur
+    	bin = ft_strjoin(ft_strjoin(*path, "/"), str);
+		if (access(bin, F_OK) == 0)
+		{
+		    if (access(bin, X_OK) == 0)
+               	return (bin);
+			else
+			    return ("error");
+		}
 		path++;
-		free(temp);
 		free(bin);
-
 	}
 	return (0);
 
