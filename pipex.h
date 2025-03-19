@@ -34,6 +34,7 @@ int     clean_exit(t_pipexelement *pipexx);
 int make_process(t_pipexelement *head, char **env);
 int close_fds(t_pipexelement *first);
 int here_doc(char *limiter);
+bool all_is_not_null(char **v,int c);
 
 
 #endif // FT_H

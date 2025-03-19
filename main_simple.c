@@ -40,7 +40,7 @@ int	put_fds(t_pipexelement *first, int *fd_files)
 	return (0);
 }
 
-t_pipexelement	*init_chain(t_pipexelement *pipexobj, char **v, int i)
+static t_pipexelement	*init_chain(t_pipexelement *pipexobj, char **v, int i)
 {
 	pipexobj = (t_pipexelement *)ft_calloc(sizeof(t_pipexelement), 1);
 	if (!pipexobj)
@@ -76,6 +76,8 @@ int	main(int c, char **v, char **env)
 
 	if (c < 5)
 		return (0);
+	if (all_is_not_null(v, c) == true)
+	   return (error_case("command not found", NULL));
 	if (env[0] == NULL)
 		env = NULL;
 	i = 1;

@@ -2,6 +2,7 @@
 *.out
 *.o
 *.exe
+*.a
 
 # Fichiers de débogage
 *.dSYM/
