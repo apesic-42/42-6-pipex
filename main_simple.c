@@ -48,6 +48,7 @@ t_pipexelement	*init_chain(t_pipexelement *pipexobj, char **v, int i)
 		error_case("malloc", pipexobj);
 		return (pipexobj);
 	}
+	pipexobj->error = 0;
 	pipexobj->cmd = v[i];
 	pipexobj->limiter = v[2];
 	return (pipexobj);
@@ -58,8 +59,9 @@ static void	placee(t_pipexelement *nexte, t_pipexelement *pipexobj,
 {
 	nexte = (t_pipexelement *)ft_calloc(sizeof(t_pipexelement), 1);
 	if (nexte == NULL)
-		first->error = "malloc";
+		first->error = 1;
 	pipexobj->next = nexte;
+	pipexobj->error = 0;
 	nexte->cmd = vi;
 	pipexobj = nexte;
 }
@@ -84,7 +86,7 @@ int	main(int c, char **v, char **env)
 	first = pipexobj;
 	while (i < c - 2)
 		placee(nexte, pipexobj, first, v[++i]);
-	if (ft_strcmp(first->error, "malloc") == 0)
+	if (first->error == 1)
 		return (error_case("malloc", first));
 	if (put_fds(first, fd_files) == 1)
 		return (-1);

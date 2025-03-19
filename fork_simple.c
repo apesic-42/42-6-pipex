@@ -16,25 +16,6 @@ static int	multi_dup(t_pipexelement *head, int *fd, int in_fd)
 	return (0);
 }
 
-static char	**spl_path(char **env)
-{
-	const char	*path;
-	char		**spl;
-
-	while (*env)
-	{
-		if (ft_strncmp(*env, "PATH=", 5) == 0)
-		{
-			path = ft_strchr(*env, '=') + 1;
-			break ;
-		}
-		env++;
-	}
-	spl = ft_split(path, ':');
-	return (spl);
-}
-
-
 char *get_cmd(const char *path) {
     char *last_slash = ft_strrchr(path, '/');
 
@@ -47,6 +28,30 @@ char *get_cmd(const char *path) {
     }
 }
 
+static char	**spl_path(char **env)
+{
+	const char	*path;
+	char		**spl;
+
+	spl = NULL;
+	if (env != NULL)
+    {
+        while (*env)
+    	{
+    		if (ft_strncmp(*env, "PATH=", 5) == 0)
+    		{
+    			path = ft_strchr(*env, '=') + 1;
+    			break ;
+    		}
+    		env++;
+    	}
+    	spl = ft_split(path, ':');
+    }
+	return (spl);
+}
+
+
+
 static char *un_bb(char **env, t_pipexelement *head, int fd[2], t_pipexelement *headd)
 {
 	char			**pathhh;
@@ -56,30 +61,34 @@ static char *un_bb(char **env, t_pipexelement *head, int fd[2], t_pipexelement *
 
 	cmd_spl = ft_split(head->cmd, ' ');
 	multi_dup(head, fd, fd[2]);
-
-	// la thechique du / est mauvaise
-	// il faut chercher si le chemin complet + l'executable (bin) est executable
-
-	if (ft_strchr(cmd_spl[0], '/') == NULL) //si oui il n'y a pas de /, c'est une commande
+	if (ft_strchr(cmd_spl[0], '/') == NULL)
+	//c'est une commande
 	{
 	    pathhh = spl_path(env);
-    	bin = find_binary(cmd_spl[0], pathhh);
-    	free_double_table(pathhh);
-        clean_exit(headd);
-       	printf("cmdij : %s bin ; %s\n", cmd_spl[0], bin);
-        execve(bin, cmd_spl, env);
-        exit(1);
+		if (pathhh != NULL)
+		{
+           	bin = find_binary(cmd_spl[0], pathhh);
+            free_double_table(pathhh);
+
+            if (bin != 0)
+            {
+                clean_exit(headd);
+                execve(bin, cmd_spl, env);
+                exit(1);
+            }
+            else
+            {
+                exit(error_case(ft_strjoin("command not sraer : ", cmd_spl[0]), headd));
+            }
+		}
 	}
-	else
-	{
-    	clean_exit(headd);
-    	bin = cmd_spl[0];
-    	cmd_spl[0] = get_cmd(cmd_spl[0]);
-    	printf("cmd : %s bin ; %s\n", cmd_spl[0], bin);
-    	execve(bin, cmd_spl, env);
-    	exit(1);
-	}
+   	clean_exit(headd);
+   	bin = cmd_spl[0];
+   	cmd_spl[0] = get_cmd(cmd_spl[0]);
+   	execve(bin, cmd_spl, env);
+   	exit(1);
 }
+
 
 int make_process(t_pipexelement *head, char **env)
 {

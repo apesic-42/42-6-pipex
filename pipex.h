@@ -20,7 +20,7 @@ typedef struct s_pipexelement
 	int     fd_in;
 	int     fd_out;
 	pid_t	pid_fork;
-	char	*error;
+	int     error;
 	char    *cmd;
 	char    *limiter;
 	struct s_pipexelement *next;
