@@ -4,10 +4,13 @@
 char	*find_binary(char *str, char **path)
 {
 	char	*bin;
+	char    *tp;
 
 	while (*path)
 	{
-    	bin = ft_strjoin(ft_strjoin(*path, "/"), str);
+	    tp = ft_strjoin(*path, "/");
+    	bin = ft_strjoin(tp, str);
+        free(tp);
 		if (access(bin, F_OK) == 0)
 		{
 		    if (access(bin, X_OK) == 0)

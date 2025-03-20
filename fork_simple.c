@@ -58,7 +58,6 @@ static char *un_bb(char **env, t_pipexelement *head, int fd[2], t_pipexelement *
 	char			*bin;
 	char			**cmd_spl;
 
-
 	cmd_spl = ft_split(head->cmd, ' ');
 	multi_dup(head, fd, fd[2]);
 	if (ft_strchr(cmd_spl[0], '/') == NULL)
@@ -77,10 +76,10 @@ static char *un_bb(char **env, t_pipexelement *head, int fd[2], t_pipexelement *
                 exit(1);
             }
             else
-            {
-                exit(error_case(ft_strjoin("command not sraer : ", cmd_spl[0]), headd));
-            }
+                exit(error_case(ft_strjoin("command not found : ", cmd_spl[0]), headd));
 		}
+		else
+		    exit(error_case(ft_strjoin("command not found : ", cmd_spl[0]), headd));
 	}
    	clean_exit(headd);
    	bin = cmd_spl[0];
