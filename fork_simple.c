@@ -103,7 +103,7 @@ int make_process(t_pipexelement *head, char **env)
 		{
 			fd[2] = here_doc(head->limiter);
 			if (fd[2] == -1)
-				return (-1);
+				return (error_case("here doc", headd));
 		}
 		if ((head->pid_fork = fork()) == 0)
 		{

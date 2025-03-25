@@ -18,14 +18,12 @@ char	*find_binary(char *str, char **path)
 			else
 			{
 			    free(bin);
-				printf("icici\n");
                 return (NULL);
 			}
 		}
 		path++;
 		free(bin);
 	}
-	printf("icici2\n");
 	return (NULL);
 
 }
