@@ -32,7 +32,7 @@ int here_doc(char *limiter)
     char *wbn;
     int fds[2];
 
-    line = NULL;
+    line = "";
     wbn = ft_strjoin(limiter, "\n");
     if (!wbn || pipee(fds) == -1)
         return (-1);
