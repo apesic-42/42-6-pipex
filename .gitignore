@@ -2,6 +2,7 @@
 *.out
 *.o
 *.exe
+*.a
 
 # Fichiers de débogage
 *.dSYM/
@@ -9,6 +10,7 @@
 # Fichiers temporaires et de sauvegarde
 *~
 *.swp
+pipex
 
 # Dossiers de build
 build/
