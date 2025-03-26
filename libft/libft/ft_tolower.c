@@ -10,9 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
-# include <stdlib.h>
-
+#include <stdlib.h>
 
 int	ft_tolower(int c)
 {
@@ -21,17 +19,19 @@ int	ft_tolower(int c)
 	return (c);
 }
 
-void free_double_table(char **table)
+void	free_double_table(char **table)
 {
-    int i;
+	int	i;
 
-    i = 0;
-    while (table[i])
-    {
-    	free(table[i]);
-    	i++;
-    }
-    free(table);
+	i = 0;
+	while (table[i])
+	{
+		if (table[i] != NULL)
+			free(table[i]);
+		i++;
+	}
+	if (table != NULL)
+		free(table);
 }
 /* #include <ctype.h>
 #include <stdio.h>

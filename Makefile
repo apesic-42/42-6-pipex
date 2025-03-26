@@ -16,6 +16,7 @@ PRINTF_SRC = $(PRINTF_DIR)libftprintf.a
 PROJECT_DIR = .
 PROJECT_SRC =		main_simple\
                     utils1\
+                    utils2\
                     fork_simple\
                     here_doc\
 

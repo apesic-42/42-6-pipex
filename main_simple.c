@@ -15,7 +15,7 @@ static int	filesfds(int *fd_files, char **v, int c)
 	}
 	else
 		fd_files[0] = open(v[1], O_RDONLY);
-	fd_files[1] = open(v[c - 1], O_WRONLY | O_CREAT, 0644);
+	fd_files[1] = open(v[c - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fd_files[0] == -1 || fd_files[1] == -1)
 	{
 		perror("open");
@@ -40,30 +40,27 @@ int	put_fds(t_pipexelement *first, int *fd_files)
 	return (0);
 }
 
-t_pipexelement	*init_chain(t_pipexelement *pipexobj, char **v, int i)
+static t_pipexelement	*placee(t_pipexelement *nexte, t_pipexelement *pipexobj,
+		t_pipexelement *first, char *vi)
 {
-	pipexobj = (t_pipexelement *)ft_calloc(sizeof(t_pipexelement), 1);
-	if (!pipexobj)
-	{
-		error_case("malloc", pipexobj);
-		return (pipexobj);
-	}
+	nexte = (t_pipexelement *)ft_calloc(sizeof(t_pipexelement), 1);
+	if (nexte == NULL)
+		first->error = 1;
+	pipexobj->next = nexte;
 	pipexobj->error = 0;
-	pipexobj->cmd = v[i];
-	pipexobj->limiter = v[2];
-	return (pipexobj);
+	nexte->cmd = vi;
+	return (nexte);
 }
 
-static t_pipexelement *placee(t_pipexelement *nexte, t_pipexelement *pipexobj,
-        t_pipexelement *first, char *vi)
+static int	placee2(t_pipexelement *first, int *fd_files, char **env)
 {
-    nexte = (t_pipexelement *)ft_calloc(sizeof(t_pipexelement), 1);
-    if (nexte == NULL)
-        first->error = 1;
-    pipexobj->next = nexte;
-    pipexobj->error = 0;
-    nexte->cmd = vi;
-    return nexte;
+	if (first->error == 1)
+		return (error_case("malloc", first));
+	if (put_fds(first, fd_files) == 1)
+		return (-1);
+	if (make_process(first, env) == 1)
+		return (127);
+	return (0);
 }
 
 int	main(int c, char **v, char **env)
@@ -85,12 +82,6 @@ int	main(int c, char **v, char **env)
 	pipexobj = init_chain(pipexobj, v, ++i);
 	first = pipexobj;
 	while (i < c - 2)
-	   pipexobj = placee(nexte, pipexobj, first, v[++i]);
-	if (first->error == 1)
-		return (error_case("malloc", first));
-	if (put_fds(first, fd_files) == 1)
-		return (-1);
-	if (make_process(first, env) == 1)
-		return (127);
-	return (0);
+		pipexobj = placee(nexte, pipexobj, first, v[++i]);
+	return (placee2(first, fd_files, env));
 }
