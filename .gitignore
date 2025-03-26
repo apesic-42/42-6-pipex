@@ -13,6 +13,7 @@
 # Dossiers de build
 build/
 cmake-build-*/
+42_pipex_tester/
 
 # Fichiers de configuration de l'IDE
 .vscode/
