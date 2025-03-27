@@ -58,9 +58,7 @@ static int	placee2(t_pipexelement *first, int *fd_files, char **env)
 		return (error_case("malloc", first));
 	if (put_fds(first, fd_files) == 1)
 		return (-1);
-	if (make_process(first, env) == 1)
-		return (127);
-	return (0);
+	return (make_process(first, env));
 }
 
 int	main(int c, char **v, char **env)

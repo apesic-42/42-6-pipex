@@ -46,8 +46,9 @@ static char	*un_bb(char **env, t_pipexelement *head, int fd[2],
 		if (pathhh != NULL)
 		{
 			bin = find_binary(cmd_spl[0], pathhh);
+			free_double_table(pathhh);
 			if (bin != 0)
-				exit(excec_final(headd, bin, cmd_spl, env));
+				excec_final(headd, bin, cmd_spl, env);
 			else
 				exit(error_case(ft_strjoin("command not found : ", cmd_spl[0]),
 						headd));
@@ -77,7 +78,8 @@ int	make_process(t_pipexelement *head, char **env)
 			if (fd[2] == -1)
 				return (error_case("here doc", headd));
 		}
-		if (fork() == 0)
+		head->pid = fork();
+		if (head->pid == 0)
 			un_bb(env, head, fd, headd);
 		close(fd[1]);
 		if (fd[2] != 0)
