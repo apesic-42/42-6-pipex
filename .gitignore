@@ -16,6 +16,8 @@ pipex
 build/
 cmake-build-*/
 42_pipex_tester/
+infiles/
+outfiles/
 
 # Fichiers de configuration de l'IDE
 .vscode/
