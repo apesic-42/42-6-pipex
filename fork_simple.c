@@ -39,7 +39,7 @@ static char	*un_bb(char **env, t_pipexelement *head, int fd[2],
 	char	**cmd_spl;
 
 	cmd_spl = ft_split(head->cmd, ' ');
-	multi_dup(head, fd, fd[2]);
+	multi_dup(head, fd, fd[2], headd);
 	if (ft_strchr(cmd_spl[0], '/') == NULL)
 	{
 		pathhh = spl_path(env);

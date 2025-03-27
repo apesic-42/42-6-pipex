@@ -35,7 +35,7 @@ int							here_doc(char *limiter);
 t_pipexelement				*init_chain(t_pipexelement *pipexobj, char **v,
 								int i);
 char						*get_cmd(const char *path);
-int							multi_dup(t_pipexelement *head, int *fd, int in_fd);
+int							multi_dup(t_pipexelement *head, int *fd, int in_fd, t_pipexelement *headd);
 char *test_binary(char *bin);
 
 #endif // FT_H
