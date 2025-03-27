@@ -11,11 +11,14 @@ static int	filesfds(int *fd_files, char **v, int c)
 	if (ft_strncmp(v[1], "here_doc", 8) == 0)
 	{
 		fd_files[0] = -128;
+	    fd_files[1] = open(v[c - 1], O_APPEND | O_WRONLY | O_CREAT, 0644);
 		re++;
 	}
 	else
+	{
 		fd_files[0] = open(v[1], O_RDONLY);
-	fd_files[1] = open(v[c - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	       fd_files[1] = open(v[c - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	}
 	if (fd_files[0] == -1 || fd_files[1] == -1)
 	{
 		perror("open");
