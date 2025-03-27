@@ -24,7 +24,7 @@ void	free_double_table(char **table)
 	int	i;
 
 	if (table == NULL)
-        return;
+		return ;
 	i = 0;
 	while (table[i])
 	{

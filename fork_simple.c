@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   fork_simple.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: apesic <apesic@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/27 14:55:43 by apesic            #+#    #+#             */
+/*   Updated: 2025/03/27 15:13:33 by apesic           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "pipex.h"
 
@@ -50,22 +61,20 @@ static char	*un_bb(char **env, t_pipexelement *head, int fd[2],
 			if (bin != 0)
 				excec_final(headd, bin, cmd_spl, env);
 			else
-				(error_case(ft_strjoin("command not found : \n", cmd_spl[0]),headd), exit(127));
+				(error_case(ft_strjoin(CNF, cmd_spl[0]), headd), exit(127));
 		}
 		else if (env == NULL)
-		        (error_case(ft_strjoin("command not found : \n", cmd_spl[0]),headd), exit(127));
+			(error_case(ft_strjoin(CNF, cmd_spl[0]), headd), exit(127));
 	}
 	bin = cmd_spl[0];
 	cmd_spl[0] = get_cmd(cmd_spl[0]);
 	exit(excec_final(headd, bin, cmd_spl, env));
 }
 
-int	make_process(t_pipexelement *head, char **env)
+int	make_process(t_pipexelement *head, t_pipexelement *headd, char **env)
 {
-	int				fd[3];
-	t_pipexelement	*headd;
+	int	fd[3];
 
-	headd = head;
 	while (head != NULL)
 	{
 		if (pipe(fd) == -1)

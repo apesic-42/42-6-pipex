@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main_simple.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: apesic <apesic@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/27 14:55:51 by apesic            #+#    #+#             */
+/*   Updated: 2025/03/27 15:11:39 by apesic           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "pipex.h"
 #include <sys/ucontext.h>
@@ -11,13 +22,13 @@ static int	filesfds(int *fd_files, char **v, int c)
 	if (ft_strncmp(v[1], "here_doc", 8) == 0)
 	{
 		fd_files[0] = -128;
-	    fd_files[1] = open(v[c - 1], O_APPEND | O_WRONLY | O_CREAT, 0644);
+		fd_files[1] = open(v[c - 1], O_APPEND | O_WRONLY | O_CREAT, 0644);
 		re++;
 	}
 	else
 	{
 		fd_files[0] = open(v[1], O_RDONLY);
-	       fd_files[1] = open(v[c - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		fd_files[1] = open(v[c - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	}
 	if (fd_files[0] == -1 || fd_files[1] == -1)
 	{
@@ -60,7 +71,7 @@ static int	placee2(t_pipexelement *first, int *fd_files, char **env)
 		return (error_case("malloc", first));
 	if (put_fds(first, fd_files) == 1)
 		return (-1);
-	return (make_process(first, env));
+	return (make_process(first, first, env));
 }
 
 int	main(int c, char **v, char **env)

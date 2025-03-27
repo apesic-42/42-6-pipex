@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils1.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: apesic <apesic@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/27 14:55:55 by apesic            #+#    #+#             */
+/*   Updated: 2025/03/27 14:55:56 by apesic           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "pipex.h"
 #include <sys/wait.h>
 
@@ -62,14 +74,14 @@ int	close_fds(t_pipexelement *first)
 	return (0);
 }
 
-int clean_exit(t_pipexelement *pipexx)
+int	clean_exit(t_pipexelement *pipexx)
 {
-    t_pipexelement *current;
-	int	k;
-	int	rn;
+	t_pipexelement	*current;
+	int				k;
+	int				rn;
 
-    current = pipexx;
-    close_fds(pipexx);
+	current = pipexx;
+	close_fds(pipexx);
 	k = 0;
 	rn = 0;
 	while (current)
@@ -78,18 +90,16 @@ int clean_exit(t_pipexelement *pipexx)
 		current = current->next;
 	}
 	rn = k >> 8;
-    free_chained_list(pipexx);
+	free_chained_list(pipexx);
 	return (rn);
 }
-
-
 
 int	error_case(char *str, t_pipexelement *pipexx)
 {
 	close_fds(pipexx);
 	free_chained_list(pipexx);
 	if (str != NULL)
-	    perror(str);
+		perror(str);
 	free(str);
 	return (1);
 }
