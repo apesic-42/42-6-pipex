@@ -50,10 +50,12 @@ static char	*un_bb(char **env, t_pipexelement *head, int fd[2],
 			if (bin != 0)
 				excec_final(headd, bin, cmd_spl, env);
 			else
-				(error_case(ft_strjoin("command not found : \n", cmd_spl[0]),headd), exit(127));
+				(error_case(ft_strjoin("command not found : \n", cmd_spl[0]),
+						headd), exit(127));
 		}
 		else if (env == NULL)
-		        (error_case(ft_strjoin("command not found : \n", cmd_spl[0]),headd), exit(127));
+			(error_case(ft_strjoin("command not found : \n", cmd_spl[0]),
+					headd), exit(127));
 	}
 	bin = cmd_spl[0];
 	cmd_spl[0] = get_cmd(cmd_spl[0]);
