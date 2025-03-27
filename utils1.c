@@ -88,7 +88,8 @@ int	error_case(char *str, t_pipexelement *pipexx)
 {
 	close_fds(pipexx);
 	free_chained_list(pipexx);
-	perror(str);
+	if (str != NULL)
+	    perror(str);
 	free(str);
 	return (1);
 }

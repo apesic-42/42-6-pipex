@@ -27,8 +27,8 @@ char	*get_cmd(const char *path)
 
 int	multi_dup(t_pipexelement *head, int *fd, int in_fd, t_pipexelement *headd)
 {
-	if (head->fd_in == -1 || head->fd_in == -1)
-		exit(clean_exit(headd));
+	if (head->fd_in == -1 || head->fd_out == -1)
+		exit(error_case(NULL, headd));
 	if (head->fd_in == -228 || head->fd_in == -128)
 		dup2(in_fd, STDIN_FILENO);
 	else
@@ -40,19 +40,4 @@ int	multi_dup(t_pipexelement *head, int *fd, int in_fd, t_pipexelement *headd)
 	close(fd[0]);
 	close(fd[1]);
 	return (0);
-}
-
-char	*test_binary(char *bin)
-{
-	if (access(bin, F_OK) == 0)
-	{
-		if (access(bin, X_OK) == 0)
-			return (bin);
-		else
-		{
-			free(bin);
-			return (NULL);
-		}
-	}
-	return (NULL);
 }
