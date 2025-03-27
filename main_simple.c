@@ -19,7 +19,7 @@ static int	filesfds(int *fd_files, char **v, int c)
 	if (fd_files[0] == -1 || fd_files[1] == -1)
 	{
 		perror("open");
-		exit(EXIT_FAILURE);
+		exit(0);
 	}
 	return (re);
 }
