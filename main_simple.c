@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main_simple.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: apesic <apesic@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/27 14:55:51 by apesic            #+#    #+#             */
+/*   Updated: 2025/03/29 14:07:03 by apesic           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "pipex.h"
 #include <sys/ucontext.h>
@@ -11,15 +22,13 @@ static int	filesfds(int *fd_files, char **v, int c)
 	if (ft_strncmp(v[1], "here_doc", 8) == 0)
 	{
 		fd_files[0] = -128;
+		fd_files[1] = open(v[c - 1], O_APPEND | O_WRONLY | O_CREAT, 0644);
 		re++;
 	}
 	else
-		fd_files[0] = open(v[1], O_RDONLY);
-	fd_files[1] = open(v[c - 1], O_WRONLY | O_CREAT, 0644);
-	if (fd_files[0] == -1 || fd_files[1] == -1)
 	{
-		perror("open");
-		exit(EXIT_FAILURE);
+		fd_files[0] = open(v[1], O_RDONLY);
+		fd_files[1] = open(v[c - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	}
 	return (re);
 }
@@ -40,21 +49,7 @@ int	put_fds(t_pipexelement *first, int *fd_files)
 	return (0);
 }
 
-static t_pipexelement	*init_chain(t_pipexelement *pipexobj, char **v, int i)
-{
-	pipexobj = (t_pipexelement *)ft_calloc(sizeof(t_pipexelement), 1);
-	if (!pipexobj)
-	{
-		error_case("malloc", pipexobj);
-		return (pipexobj);
-	}
-	pipexobj->error = 0;
-	pipexobj->cmd = v[i];
-	pipexobj->limiter = v[2];
-	return (pipexobj);
-}
-
-static void	placee(t_pipexelement *nexte, t_pipexelement *pipexobj,
+static t_pipexelement	*placee(t_pipexelement *nexte, t_pipexelement *pipexobj,
 		t_pipexelement *first, char *vi)
 {
 	nexte = (t_pipexelement *)ft_calloc(sizeof(t_pipexelement), 1);
@@ -63,7 +58,16 @@ static void	placee(t_pipexelement *nexte, t_pipexelement *pipexobj,
 	pipexobj->next = nexte;
 	pipexobj->error = 0;
 	nexte->cmd = vi;
-	pipexobj = nexte;
+	return (nexte);
+}
+
+static int	placee2(t_pipexelement *first, int *fd_files, char **env)
+{
+	if (first->error == 1)
+		return (error_case("malloc", first));
+	if (put_fds(first, fd_files) == 1)
+		return (-1);
+	return (make_process(first, first, env));
 }
 
 int	main(int c, char **v, char **env)
@@ -76,8 +80,6 @@ int	main(int c, char **v, char **env)
 
 	if (c < 5)
 		return (0);
-	if (all_is_not_null(v, c) == true)
-	   return (error_case("command not found", NULL));
 	if (env[0] == NULL)
 		env = NULL;
 	i = 1;
@@ -87,44 +89,6 @@ int	main(int c, char **v, char **env)
 	pipexobj = init_chain(pipexobj, v, ++i);
 	first = pipexobj;
 	while (i < c - 2)
-		placee(nexte, pipexobj, first, v[++i]);
-	if (first->error == 1)
-		return (error_case("malloc", first));
-	if (put_fds(first, fd_files) == 1)
-		return (-1);
-	if (make_process(first, env) == 1)
-		return (127);
-	return (0);
+		pipexobj = placee(nexte, pipexobj, first, v[++i]);
+	return (placee2(first, fd_files, env));
 }
-
-// int	main(int c, char **v, char **env)
-// {
-// 	t_pipexelement	*pipexobj;
-// 	t_pipexelement	*nexte;
-// 	t_pipexelement	*first;
-// 	int i;
-// 	int		fd_files[2];
-
-// 	if (c < 5)
-// 		return (0);
-// 	i = 1;
-// 	i += filesfds(fd_files, v, c);
-// 	i++;
-//     pipexobj = init_chain(pipexobj, v, i);
-//     first = pipexobj;
-//     while (i < c - 2)
-//     {
-//         nexte = (t_pipexelement *)ft_calloc(sizeof(t_pipexelement), 1);
-//         if (nexte == NULL)
-//             return (error_case("malloc", first));
-//         pipexobj->next = nexte;
-//         nexte->cmd = v[++i];
-//         pipexobj = nexte;
-//     }
-// 	if (put_fds(first, fd_files) == 1)
-// 		return (-1);
-// 	if (make_process(first, v, env) == 1)
-// 		return (127);
-// 	return (0);
-
-// }

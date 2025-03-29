@@ -2,9 +2,11 @@
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: apesic <apesic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/13 16:47:53 by apesic            #+#    #+#             */
-/*   Updated: 2024/12/16 19:34:33 by apesic           ###   ########.fr       */
+/*   Created: 2025/03/27 14:56:13 by apesic            #+#    #+#             */
+/*   Updated: 2025/03/27 15:15:05 by apesic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,46 +111,3 @@ char	*get_next_line(int fd)
 	first = get_new_first(first);
 	return (out_line);
 }
-
-#include <fcntl.h> // Pour open() et O_RDONLY
-#include <unistd.h> // Pour close() et d'autres fonctions d'E/S comme read()
-
-//int	main(void)
-//{
-//	int		fd;
-//	char	*a;
-	//char	*b;
-	// char	*c;
-	// char	*d;
-	// char	*e;
-	// char	*f;
-	// char	*g;
-	// char	*h;
-
-//	fd = open("empty.txt", O_RDONLY);
-//	a = get_next_line(fd);
-//	printf("%s", a);
-//	free(a);
-//	b = get_next_line(fd);
-//	printf("%s", b);
-	//free(b);
-	// c = get_next_line(fd);
-	// printf("%s", c);
-	// free(c);
-	// d = get_next_line(fd);
-	// printf("%s", d);
-	// free(d);
-	// e = get_next_line(fd);
-	// printf("%s", e);
-	// free(e);
-	// f = get_next_line(fd);
-	// printf("%s", f);
-	// free(f);
-	// g = get_next_line(fd);
-	// printf("%s", g);
-	// free(g);
-	// h = get_next_line(fd);
-	// printf("%s", h);
-	// free(h);
-//}
-// cc -Wall -Wextra -Werror -D BUFFER_SIZE=42 get_next_line.c get_next_line_utils.c -g

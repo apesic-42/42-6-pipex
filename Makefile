@@ -1,10 +1,23 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: apesic <apesic@student.42.fr>              +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2025/03/27 14:56:03 by apesic            #+#    #+#              #
+#    Updated: 2025/03/29 14:00:40 by apesic           ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
 
 
 NAME	=	pipex
+NAME_B	=	pipex_bonus
 
 CC          =	cc # clang
 CFLAGS_ANA  =   -fsanitize=address,leak,undefined -g3 -g
-CFLAGS      =	-Wall -Wextra -Werror $(CFLAGS_ANA)
+CFLAGS      =	-Wall -Wextra -Werror #$(CFLAGS_ANA)
 AR          =	ar
 
 LIBFT_DIR = libft/libft/
@@ -31,6 +44,11 @@ $(NAME): $(OBJS)
 	make -C $(PRINTF_DIR)
 	$(CC) $(CFLAGS) $(OBJS) $(LIBFT_SRC) $(PRINTF_SRC) -o $(NAME)
 
+$(NAME_B): $(OBJS)
+	make -C $(LIBFT_DIR)
+	make -C $(PRINTF_DIR)
+	$(CC) $(CFLAGS) $(OBJS) $(LIBFT_SRC) $(PRINTF_SRC) -o $(NAME_B)
+
 %.o:%.c
 	$(CC) $(CFLAGS) -I./ -c $< -o $@ -g # enlever -g
 
@@ -43,8 +61,11 @@ fclean : clean
 	make -C $(LIBFT_DIR) fclean
 	make -C $(PRINTF_DIR) fclean
 	rm -f $(NAME)
+	rm -f $(NAME_B)
 
 re : fclean all
+
+bonus : $(NAME_B)
 
 # en plus
 

@@ -1,37 +1,47 @@
-#include "pipex.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils1.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: apesic <apesic@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/27 14:55:55 by apesic            #+#    #+#             */
+/*   Updated: 2025/03/29 15:06:55 by apesic           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
+#include "pipex.h"
+#include <sys/wait.h>
 
 char	*find_binary(char *str, char **path)
 {
 	char	*bin;
-	char    *tm;
+	char	*tp;
 
 	while (*path)
 	{
-	    tm =  ft_strjoin(*path, "/");
-
-    	bin = ft_strjoin(tm, str);
-        free(tm);
+		tp = ft_strjoin(*path, "/");
+		bin = ft_strjoin(tp, str);
+		free(tp);
 		if (access(bin, F_OK) == 0)
 		{
-		    if (access(bin, X_OK) == 0)
-               	return (bin);
+			if (access(bin, X_OK) == 0)
+			{
+				return (bin);
+			}
 			else
 			{
-			    free(bin);
-				printf("icici\n");
-                return (NULL);
+				free(bin);
+				return (NULL);
 			}
 		}
 		path++;
 		free(bin);
 	}
-	printf("icici2\n");
 	return (NULL);
-
 }
 
-static void	free_chained_list(t_pipexelement *pipexx)
+void	free_chained_list(t_pipexelement *pipexx)
 {
 	t_pipexelement	*current;
 	t_pipexelement	*next;
@@ -45,38 +55,52 @@ static void	free_chained_list(t_pipexelement *pipexx)
 	}
 }
 
-int close_fds(t_pipexelement *first)
+int	close_fds(t_pipexelement *first)
 {
-    while (first != NULL)
-    {
-        if (first->fd_in >= 0)
-        {
-            if (close(first->fd_in) == -1)
-                return (-1);
-        }
-        if (first->fd_out >= 0)
-        {
-            if (close(first->fd_out) == -1)
-                return (-1);
-        }
-        first = first->next;
-    }
-    return (0);
+	while (first != NULL)
+	{
+		if (first->fd_in >= 0)
+		{
+			if (close(first->fd_in) == -1)
+				return (-1);
+		}
+		if (first->fd_out >= 0)
+		{
+			if (close(first->fd_out) == -1)
+				return (-1);
+		}
+		first = first->next;
+	}
+	return (0);
 }
 
-// Fonction pour libérer une liste chaînée
 int	clean_exit(t_pipexelement *pipexx)
 {
+	t_pipexelement	*current;
+	int				k;
+	int				rn;
+
+	current = pipexx;
 	close_fds(pipexx);
+	k = 0;
+	rn = 0;
+	while (current)
+	{
+		waitpid(current->pid, &k, 0);
+		current = current->next;
+	}
+	rn = k >> 8;
 	free_chained_list(pipexx);
-	return (0);
+	return (rn);
 }
 
 int	error_case(char *str, t_pipexelement *pipexx)
 {
-    close_fds(pipexx);
+	close_fds(pipexx);
 	free_chained_list(pipexx);
-	perror(str);
+	if (str != NULL)
+		perror(str);
 	free(str);
 	return (1);
 }
+

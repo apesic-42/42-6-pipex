@@ -6,7 +6,7 @@
 /*   By: apesic <apesic@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/08 10:28:19 by apesic            #+#    #+#             */
-/*   Updated: 2024/11/25 15:49:29 by apesic           ###   ########.fr       */
+/*   Updated: 2025/03/29 15:18:24 by apesic           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ char	**ft_split(char const *s, char c)
 	int		len_mot;
 
 	t = 0;
-	l = (char **)malloc((count_w(s, c) + 1) * sizeof(char *));
+	l = (char **)malloc((count_w(s, c) + 2) * sizeof(char *));
 	if (!s || !l)
 		return (NULL);
 	while (*s)
@@ -98,4 +98,4 @@ char	**ft_split(char const *s, char c)
 // 		i++;
 // 	}
 // 	free(res);
-// } 
+// }
