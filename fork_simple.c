@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "pipex.h"
+#include <unistd.h>
 
 static char	**spl_path(char **env)
 {
@@ -50,8 +51,7 @@ static char	*un_bb(char **env, t_pipexelement *head, int fd[2],
 	char	**cmd_spl;
 
 	cmd_spl = ft_split(head->cmd, ' ');
-	multi_dup(head, fd, headd, cmd_spl);
-	if (ft_strchr(cmd_spl[0], '/') == NULL)
+	if (du(head, fd, headd, cmd_spl) && ch(cmd_spl[0], headd, cmd_spl) == NULL)
 	{
 		pathhh = spl_path(env);
 		if (pathhh != NULL)
@@ -61,10 +61,12 @@ static char	*un_bb(char **env, t_pipexelement *head, int fd[2],
 			if (bin != 0)
 				excec_final(headd, bin, cmd_spl, env);
 			else
-				(error_case_arg2(ft_strjoin(CNF, cmd_spl[0]), headd, cmd_spl), exit(127));
+				(error_case_arg2(ft_strjoin(CNF, cmd_spl[0]), headd, cmd_spl),
+					exit(127));
 		}
 		else if (env == NULL)
-			(error_case_arg2(ft_strjoin(CNF, cmd_spl[0]), headd, cmd_spl), exit(127));
+			(error_case_arg2(ft_strjoin(CNF, cmd_spl[0]), headd, cmd_spl),
+				exit(127));
 	}
 	bin = cmd_spl[0];
 	cmd_spl[0] = get_cmd(cmd_spl[0]);
@@ -89,8 +91,6 @@ int	make_process(t_pipexelement *head, t_pipexelement *headd, char **env)
 		if (head->pid == 0)
 			un_bb(env, head, fd, headd);
 		close(fd[1]);
-		// if (fd[2] != 0)
-		// 	close(fd[2]);
 		fd[2] = fd[0];
 		head = head->next;
 	}

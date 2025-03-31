@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "pipex.h"
+#include <stdio.h>
 
 t_pipexelement	*init_chain(t_pipexelement *pipexobj, char **v, int i)
 {
@@ -37,11 +38,11 @@ char	*get_cmd(const char *path)
 		return ((char *)path);
 }
 
-int	multi_dup(t_pipexelement *head, int *fd, t_pipexelement *headd, char **cmd_spl)
+int	du(t_pipexelement *head, int *fd, t_pipexelement *headd, char **cmd_spl)
 {
-    int in_fd;
+	int	in_fd;
 
-    in_fd = fd[2];
+	in_fd = fd[2];
 	if (head->fd_in == -1 || head->fd_out == -1)
 		exit(error_case_arg2(NULL, headd, cmd_spl));
 	if (head->fd_in == -228 || head->fd_in == -128)
@@ -54,7 +55,7 @@ int	multi_dup(t_pipexelement *head, int *fd, t_pipexelement *headd, char **cmd_s
 		dup2(head->fd_out, STDOUT_FILENO);
 	close(fd[0]);
 	close(fd[1]);
-	return (0);
+	return (1);
 }
 
 char	*find_binary(char *str, char **path)
@@ -83,4 +84,21 @@ char	*find_binary(char *str, char **path)
 		free(bin);
 	}
 	return (NULL);
+}
+
+char	*ch(char *s, t_pipexelement *headd, char **cmd_spl)
+{
+	int	i;
+
+	i = 0;
+	if (s)
+	{
+		while (s[i] != '/')
+		{
+			if (s[i] == '\0' && i != 0)
+				return ((char *)0);
+			i++;
+		}
+	}
+	(error_case_arg2(ft_strjoin(CNF, cmd_spl[0]), headd, cmd_spl), exit(127));
 }

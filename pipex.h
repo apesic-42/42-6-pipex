@@ -39,7 +39,8 @@ typedef struct s_pipexelement
 }							t_pipexelement;
 
 int							error_case(char *str, t_pipexelement *pipexx);
-int	error_case_arg2(char *str, t_pipexelement *pipexx, char **cmd_spl);
+int							error_case_arg2(char *str, t_pipexelement *pipexx,
+								char **cmd_spl);
 char						*find_binary(char *str, char **path);
 int							clean_exit(t_pipexelement *pipexx);
 int							make_process(t_pipexelement *head,
@@ -49,7 +50,8 @@ int							here_doc(char *limiter);
 t_pipexelement				*init_chain(t_pipexelement *pipexobj, char **v,
 								int i);
 char						*get_cmd(const char *path);
-int	multi_dup(t_pipexelement *head, int *fd, t_pipexelement *headd, char **cmd_spl);
-
+int							du(t_pipexelement *head, int *fd,
+								t_pipexelement *headd, char **cmd_spl);
+char						*ch(char *s, t_pipexelement *headd, char **cmd_spl);
 
 #endif // FT_H
