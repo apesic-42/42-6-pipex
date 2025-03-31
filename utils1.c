@@ -10,36 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft/libft/libft.h"
 #include "pipex.h"
-#include <sys/wait.h>
-
-char	*find_binary(char *str, char **path)
-{
-	char	*bin;
-	char	*tp;
-
-	while (*path)
-	{
-		tp = ft_strjoin(*path, "/");
-		bin = ft_strjoin(tp, str);
-		free(tp);
-		if (access(bin, F_OK) == 0)
-		{
-			if (access(bin, X_OK) == 0)
-			{
-				return (bin);
-			}
-			else
-			{
-				free(bin);
-				return (NULL);
-			}
-		}
-		path++;
-		free(bin);
-	}
-	return (NULL);
-}
 
 static void	free_chained_list(t_pipexelement *pipexx)
 {
@@ -101,5 +73,16 @@ int	error_case(char *str, t_pipexelement *pipexx)
 	if (str != NULL)
 		perror(str);
 	free(str);
+	return (1);
+}
+
+int	error_case_arg2(char *str, t_pipexelement *pipexx, char **cmd_spl)
+{
+	close_fds(pipexx);
+	free_chained_list(pipexx);
+	if (str != NULL)
+		perror(str);
+	free(str);
+	free_double_table(cmd_spl);
 	return (1);
 }

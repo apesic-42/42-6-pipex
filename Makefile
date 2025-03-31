@@ -16,7 +16,7 @@ NAME	=	pipex
 
 CC          =	cc # clang
 CFLAGS_ANA  =   -fsanitize=address,leak,undefined -g3 -g
-CFLAGS      =	-Wall -Wextra -Werror $(CFLAGS_ANA)
+CFLAGS      =	-Wall -Wextra -Werror # $(CFLAGS_ANA)
 AR          =	ar
 
 LIBFT_DIR = libft/libft/

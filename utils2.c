@@ -37,10 +37,13 @@ char	*get_cmd(const char *path)
 		return ((char *)path);
 }
 
-int	multi_dup(t_pipexelement *head, int *fd, int in_fd, t_pipexelement *headd)
+int	multi_dup(t_pipexelement *head, int *fd, t_pipexelement *headd, char **cmd_spl)
 {
+    int in_fd;
+
+    in_fd = fd[2];
 	if (head->fd_in == -1 || head->fd_out == -1)
-		exit(error_case(NULL, headd));
+		exit(error_case_arg2(NULL, headd, cmd_spl));
 	if (head->fd_in == -228 || head->fd_in == -128)
 		dup2(in_fd, STDIN_FILENO);
 	else
@@ -52,4 +55,32 @@ int	multi_dup(t_pipexelement *head, int *fd, int in_fd, t_pipexelement *headd)
 	close(fd[0]);
 	close(fd[1]);
 	return (0);
+}
+
+char	*find_binary(char *str, char **path)
+{
+	char	*bin;
+	char	*tp;
+
+	while (*path)
+	{
+		tp = ft_strjoin(*path, "/");
+		bin = ft_strjoin(tp, str);
+		free(tp);
+		if (access(bin, F_OK) == 0)
+		{
+			if (access(bin, X_OK) == 0)
+			{
+				return (bin);
+			}
+			else
+			{
+				free(bin);
+				return (NULL);
+			}
+		}
+		path++;
+		free(bin);
+	}
+	return (NULL);
 }
