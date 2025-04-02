@@ -13,17 +13,19 @@
 #include "pipex.h"
 #include <stdio.h>
 
-t_pipexelement	*init_chain(t_pipexelement *pipexobj, char **v, int i)
+t_pipexelement	*init_chain(t_pipex *pipex, t_pipexelement *pipexobj, char **v,
+		int i)
 {
 	pipexobj = (t_pipexelement *)ft_calloc(sizeof(t_pipexelement), 1);
 	if (!pipexobj)
 	{
-		error_case("malloc", pipexobj);
+		error_case(pipex, "malloc", 0);
 		return (pipexobj);
 	}
 	pipexobj->error = 0;
 	pipexobj->cmd = v[i];
-	pipexobj->limiter = v[2];
+	if (strcmp(v[1], "here_doc") == 0)
+		pipex->limiter = v[2];
 	return (pipexobj);
 }
 
@@ -38,23 +40,27 @@ char	*get_cmd(const char *path)
 		return ((char *)path);
 }
 
-int	du(t_pipexelement *head, int *fd, t_pipexelement *headd, char **cmd_spl)
+int	du(t_pipex *pipex, t_pipexelement *head, char **cmd_spl)
 {
-	int	in_fd;
-
-	in_fd = fd[2];
-	if (head->fd_in == -1 || head->fd_out == -1)
-		exit(error_case_arg2(NULL, headd, cmd_spl));
-	if (head->fd_in == -228 || head->fd_in == -128)
-		dup2(in_fd, STDIN_FILENO);
+	if (pipex->fd_in == -1 || pipex->fd_out == -1)
+	{
+		ft_closem1(pipex->fd[0]);
+		ft_closem1(pipex->fd_out);
+		ft_closem1(pipex->fd[1]);
+		ft_closem1(pipex->fd[2]);
+		exit(error_case(pipex, NULL, cmd_spl));
+	}
+	dup2(pipex->fd[2], STDIN_FILENO);
+	if (head->next != NULL)
+		dup2(pipex->fd[1], STDOUT_FILENO);
 	else
-		dup2(head->fd_in, STDIN_FILENO);
-	if (head->fd_out == -228)
-		dup2(fd[1], STDOUT_FILENO);
-	else
-		dup2(head->fd_out, STDOUT_FILENO);
-	close(fd[0]);
-	close(fd[1]);
+	{
+		dup2(pipex->fd_out, STDOUT_FILENO);
+	}
+	close(pipex->fd[0]);
+	close(pipex->fd_out);
+	close(pipex->fd[1]);
+	close(pipex->fd[2]);
 	return (1);
 }
 
@@ -86,7 +92,7 @@ char	*find_binary(char *str, char **path)
 	return (NULL);
 }
 
-char	*ch(char *s, t_pipexelement *headd, char **cmd_spl)
+char	*ch(t_pipex *pipex, char *s, char **cmd_spl)
 {
 	int	i;
 
@@ -100,5 +106,5 @@ char	*ch(char *s, t_pipexelement *headd, char **cmd_spl)
 			i++;
 		}
 	}
-	(error_case_arg2(ft_strjoin(CNF, cmd_spl[0]), headd, cmd_spl), exit(127));
+	(error_case(pipex, ft_strjoin(CNF, cmd_spl[0]), cmd_spl), exit(127));
 }

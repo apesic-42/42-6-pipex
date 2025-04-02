@@ -27,33 +27,13 @@ static void	free_chained_list(t_pipexelement *pipexx)
 	}
 }
 
-int	close_fds(t_pipexelement *first)
-{
-	while (first != NULL)
-	{
-		if (first->fd_in >= 0)
-		{
-			if (close(first->fd_in) == -1)
-				return (-1);
-		}
-		if (first->fd_out >= 0)
-		{
-			if (close(first->fd_out) == -1)
-				return (-1);
-		}
-		first = first->next;
-	}
-	return (0);
-}
-
-int	clean_exit(t_pipexelement *pipexx)
+int	clean_exit(t_pipex *pipex)
 {
 	t_pipexelement	*current;
 	int				k;
 	int				rn;
 
-	current = pipexx;
-	close_fds(pipexx);
+	current = pipex->start;
 	k = 0;
 	rn = 0;
 	while (current)
@@ -62,27 +42,23 @@ int	clean_exit(t_pipexelement *pipexx)
 		current = current->next;
 	}
 	rn = k >> 8;
-	free_chained_list(pipexx);
+	free_chained_list(pipex->start);
 	return (rn);
 }
 
-int	error_case(char *str, t_pipexelement *pipexx)
+int	error_case(t_pipex *pipex, char *str, char **cmd_spl)
 {
-	close_fds(pipexx);
-	free_chained_list(pipexx);
+	free_chained_list(pipex->start);
 	if (str != NULL)
 		perror(str);
 	free(str);
+	if (cmd_spl)
+		free_double_table(cmd_spl);
 	return (1);
 }
 
-int	error_case_arg2(char *str, t_pipexelement *pipexx, char **cmd_spl)
+void	ft_closem1(int fd)
 {
-	close_fds(pipexx);
-	free_chained_list(pipexx);
-	if (str != NULL)
-		perror(str);
-	free(str);
-	free_double_table(cmd_spl);
-	return (1);
+	if (fd != -1)
+		close(fd);
 }

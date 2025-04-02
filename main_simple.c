@@ -14,43 +14,27 @@
 #include <sys/ucontext.h>
 #include <unistd.h>
 
-static int	filesfds(int *fd_files, char **v, int c)
+static int	filesfds(t_pipex *pipex, char **v, int c)
 {
 	int	re;
 
 	re = 0;
 	if (ft_strncmp(v[1], "here_doc", 8) == 0)
 	{
-		fd_files[0] = -128;
-		fd_files[1] = open(v[c - 1], O_APPEND | O_WRONLY | O_CREAT, 0644);
+		pipex->fd_in = -128;
+		pipex->fd_out = open(v[c - 1], O_APPEND | O_WRONLY | O_CREAT, 0644);
 		re++;
 	}
 	else
 	{
-		fd_files[0] = open(v[1], O_RDONLY);
-		fd_files[1] = open(v[c - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		pipex->fd_in = open(v[1], O_RDONLY);
+		pipex->fd_out = open(v[c - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	}
-	if (fd_files[0] == -1 || fd_files[1] == -1)
+	if (pipex->fd_in == -1 || pipex->fd_out == -1)
 	{
 		perror("open");
 	}
 	return (re);
-}
-
-int	put_fds(t_pipexelement *first, int *fd_files)
-{
-	first->fd_in = fd_files[0];
-	first->fd_out = -228;
-	first = first->next;
-	while (first->next != NULL)
-	{
-		first->fd_in = -228;
-		first->fd_out = -228;
-		first = first->next;
-	}
-	first->fd_in = -228;
-	first->fd_out = fd_files[1];
-	return (0);
 }
 
 static t_pipexelement	*placee(t_pipexelement *nexte, t_pipexelement *pipexobj,
@@ -65,34 +49,40 @@ static t_pipexelement	*placee(t_pipexelement *nexte, t_pipexelement *pipexobj,
 	return (nexte);
 }
 
-static int	placee2(t_pipexelement *first, int *fd_files, char **env)
+static int	placee2(t_pipex *pipex)
 {
-	if (first->error == 1)
-		return (error_case("malloc", first));
-	if (put_fds(first, fd_files) == 1)
-		return (-1);
-	return (make_process(first, first, env));
+	if (pipex->start->error == 1)
+		return (error_case(pipex, "malloc", 0));
+	if (pipex->limiter)
+	{
+		pipex->fd_in = here_doc(pipex);
+		if (pipex->fd_in == -1)
+			return (error_case(pipex, "here doc", 0));
+	}
+	pipex->fd[2] = pipex->fd_in;
+	return (make_process(pipex));
 }
 
 int	main(int c, char **v, char **env)
 {
+	t_pipex			pipex;
 	t_pipexelement	*pipexobj;
-	t_pipexelement	*first;
 	t_pipexelement	*nexte;
 	int				i;
-	int				fd_files[2];
 
 	if (c < 5)
 		return (0);
 	if (env[0] == NULL)
 		env = NULL;
 	i = 1;
-	i += filesfds(fd_files, v, c);
+	i += filesfds(&pipex, v, c);
 	pipexobj = NULL;
 	nexte = NULL;
-	pipexobj = init_chain(pipexobj, v, ++i);
-	first = pipexobj;
+	pipex.limiter = 0;
+	pipexobj = init_chain(&pipex, pipexobj, v, ++i);
+	pipex.env = env;
+	pipex.start = pipexobj;
 	while (i < c - 2)
-		pipexobj = placee(nexte, pipexobj, first, v[++i]);
-	return (placee2(first, fd_files, env));
+		pipexobj = placee(nexte, pipexobj, pipex.start, v[++i]);
+	return (placee2(&pipex));
 }

@@ -12,38 +12,31 @@
 
 #include "pipex.h"
 
-static int	pipee(int *fds)
-{
-	if (pipe(fds) == -1)
-		return (-1);
-	return (0);
-}
-
 static char	*place(char *str)
 {
 	free(str);
 	return (NULL);
 }
 
-static int	finish(char *f1, char *f2, int c1, int r1)
+static int	finish(char *f1, char *f2, int *fd)
 {
 	if (f1 != NULL)
 		free(f1);
 	if (f2 != NULL)
 		free(f2);
-	close(c1);
-	return (r1);
+	close(fd[1]);
+	return (fd[0]);
 }
 
-int	here_doc(char *limiter)
+int	here_doc(t_pipex *pipex)
 {
 	char	*line;
 	char	*wbn;
 	int		fds[2];
 
 	line = "okok";
-	wbn = ft_strjoin(limiter, "\n");
-	if (!wbn || pipee(fds) == -1)
+	wbn = ft_strjoin(pipex->limiter, "\n");
+	if (!wbn || pipe(fds) == -1)
 		return (-1);
 	while (line != NULL)
 	{
@@ -55,5 +48,5 @@ int	here_doc(char *limiter)
 			write(fds[1], line, ft_strlen(line));
 		free(line);
 	}
-	return (finish(wbn, line, fds[1], fds[0]));
+	return (finish(wbn, line, fds));
 }
