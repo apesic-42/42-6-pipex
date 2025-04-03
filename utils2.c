@@ -42,8 +42,9 @@ char	*get_cmd(const char *path)
 
 int	du(t_pipex *pipex, t_pipexelement *head, char **cmd_spl)
 {
-    (void)cmd_spl;
-	if (pipex->fd[2] == -1 || (head->next == NULL && pipex->fd_out == -1) || (head->next != NULL && pipex->fd[1] == -1))
+	(void)cmd_spl;
+	if (pipex->fd[2] == -1 || (head->next == NULL && pipex->fd_out == -1)
+		|| (head->next != NULL && pipex->fd[1] == -1))
 	{
 		ft_closem1(pipex->fd[0]);
 		ft_closem1(pipex->fd_out);
